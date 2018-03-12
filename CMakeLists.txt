@@ -25,12 +25,15 @@ add_executable(${SHORT_NAME}.elf
 )
 
 target_link_libraries(${SHORT_NAME}.elf
+  SDL2
   vita2d
   freetype
   png
   jpeg
   ScePgf_stub
   ScePvf_stub
+  SceTouch_stub
+  SceHid_stub
   SceDisplay_stub
   SceCtrl_stub
   SceAudio_stub

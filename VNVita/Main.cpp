@@ -16,15 +16,15 @@
 
 #include <SDL2/SDL.h>
 
+#include "Program.h"
+
 int main(int argc, char* args[])
 {
-	SDL_Window *window = nullptr;
+	using namespace VNVita;
 
-	window = SDL_CreateWindow("VN Vita", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 544, SDL_WindowFlags(0));
+	Program program;
 
-	SDL_Renderer *renderer = nullptr;
-
-	renderer = SDL_CreateRenderer(window, -1, SDL_RendererFlags::SDL_RENDERER_ACCELERATED);
+	program.run();
 
 	return 0;
 }

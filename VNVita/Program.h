@@ -17,6 +17,7 @@ limitations under the License.
 */
 
 #include <memory>
+#include <vector>
 
 #include <SDL2/SDL.h>
 
@@ -34,6 +35,10 @@ namespace VNVita
 		SharedWindow window;
 		SharedRenderer renderer;
 		bool running;
+
+		SDL_Joystick * joystick;
+		SDL_Surface * surface;
+		SDL_Texture * texture;
 
 	public:
 		Program(void);

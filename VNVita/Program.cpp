@@ -22,12 +22,15 @@ limitations under the License.
 
 VNVita::Program::Program(void)
 {
-	SDL_Init(SDL_INIT_EVERYTHING);
+	SDL_Init(SDL_INIT_EVERYTHING); // TODO: handle error
+
 	auto flags = IMG_Init(IMG_InitFlags::IMG_INIT_PNG);
 	if (flags & IMG_InitFlags::IMG_INIT_PNG == 0)
 	{
 		throw std::exception("Fagets");
 	}
+
+	TTF_Init(); // TODO: handle error
 
 	SDL_Window * windowPointer = SDL_CreateWindow("VN Vita", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 960, 544, SDL_WindowFlags(0));
 
@@ -82,6 +85,24 @@ void VNVita::Program::run(void)
 	}
 
 	this->surface = IMG_Load("Test.png");
+	if (this->surface != nullptr)
+	{
+		this->texture = SDL_CreateTextureFromSurface(this->renderer.get(), this->surface);
+		if (this->texture != nullptr)
+		{
+			SDL_FreeSurface(this->surface);
+			this->surface = nullptr;
+		}
+	}
+
+	this->font = TTF_OpenFont("consola.ttf", 12);
+	if (this->font != nullptr)
+	{
+		if (this->surface != nullptr) SDL_FreeSurface(this->surface);
+		SDL_Color green = { 0, 255, 0, 255 }, black = { 0, 0, 0, 255 };
+		this->surface = TTF_RenderText_Shaded(this->font, "Hello Fagets", green, black);
+	}
+
 	if (this->surface != nullptr)
 	{
 		this->texture = SDL_CreateTextureFromSurface(this->renderer.get(), this->surface);

@@ -20,6 +20,7 @@ limitations under the License.
 #include <vector>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 namespace VNVita
 {
@@ -36,6 +37,7 @@ namespace VNVita
 		SharedRenderer renderer;
 		bool running;
 
+		TTF_Font * font;
 		SDL_Joystick * joystick;
 		SDL_Surface * surface;
 		SDL_Texture * texture;

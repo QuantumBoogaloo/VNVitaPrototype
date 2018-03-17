@@ -18,17 +18,9 @@ limitations under the License.
 
 #include <stdexcept>
 
-#include <SDL2/SDL_image.h>
-
 VNVita::Program::Program(void)
 {
 	SDL_Init(SDL_INIT_EVERYTHING); // TODO: handle error
-
-	auto flags = IMG_Init(IMG_InitFlags::IMG_INIT_PNG);
-	if (flags & IMG_InitFlags::IMG_INIT_PNG == 0)
-	{
-		throw std::exception("Fagets");
-	}
 
 	TTF_Init(); // TODO: handle error
 
@@ -84,25 +76,60 @@ void VNVita::Program::run(void)
 		this->joystick = SDL_JoystickOpen(0);
 	}
 
-	this->surface = IMG_Load("Test.png");
-	if (this->surface != nullptr)
-	{
-		this->texture = SDL_CreateTextureFromSurface(this->renderer.get(), this->surface);
-		if (this->texture != nullptr)
-		{
-			SDL_FreeSurface(this->surface);
-			this->surface = nullptr;
-		}
-	}
-
-	this->font = TTF_OpenFont("consola.ttf", 12);
+	/*this->font = TTF_OpenFont("consola.ttf", 12);
 	if (this->font != nullptr)
 	{
 		if (this->surface != nullptr) SDL_FreeSurface(this->surface);
 		SDL_Color green = { 0, 255, 0, 255 }, black = { 0, 0, 0, 255 };
-		this->surface = TTF_RenderText_Shaded(this->font, "Hello Fagets", green, black);
+		this->surface = TTF_RenderText_Solid(this->font, "Hello World", green);
 	}
 
+	if (this->surface != nullptr)
+		SDL_FreeSurface(this->surface);*/
+
+/*#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+	this->surface = SDL_CreateRGBSurface(0, 256, 128, 8, 0xFF << 0, 0xFF << 8, 0xFF << 16, 0xFF << 24);
+#else
+	this->surface = SDL_CreateRGBSurface(0, 256, 128, 8, 0xFF << 24, 0xFF << 16, 0xFF << 8, 0xFF << 0);
+#endif*/
+	SDL_DisplayMode displayMode;
+	SDL_GetCurrentDisplayMode(0, &displayMode);
+
+	this->surface = SDL_CreateRGBSurfaceWithFormat(0, 512, 256, 8, displayMode.format);
+
+	if(this->surface != nullptr)
+	{
+		const unsigned char value = 127 + 64;
+
+		const SDL_Colour colours[] =
+		{
+			{ value, 0, 0, SDL_ALPHA_OPAQUE },
+			{ 0, value, 0, SDL_ALPHA_OPAQUE },
+			{ 0, 0, value, SDL_ALPHA_OPAQUE },
+			{ value, value, 0, SDL_ALPHA_OPAQUE },
+		};
+
+		const SDL_Rect rects[] =
+		{
+			{ 0, 0, 256, 128 },
+			{ 256, 0, 256, 128 },
+			{ 0, 128, 256, 128 },
+			{ 256, 128, 256, 128 },
+		};
+
+		for (int i = 0; i < 4; ++i)
+		{
+			SDL_Colour colour = colours[i];
+			Uint32 colourValue = SDL_MapRGB(this->surface->format, colour.r, colour.g, colour.b);
+			SDL_FillRect(this->surface, &rects[i], colourValue);
+		}
+	}
+	else
+	{
+		auto error = SDL_GetError();
+		int breakpointSentry = 0;
+	}
+	
 	if (this->surface != nullptr)
 	{
 		this->texture = SDL_CreateTextureFromSurface(this->renderer.get(), this->surface);
@@ -181,7 +208,14 @@ void VNVita::Program::render(void)
 
 	if (this->texture != nullptr)
 	{
-		SDL_RenderCopy(renderer, this->texture, nullptr, nullptr);
+		// Uncomment these fur lulz
+		/*SDL_RenderCopy(renderer, this->texture, nullptr, nullptr);
+
+		SDL_Rect rect2 = { 600, 300, 128, 64 };
+		SDL_RenderCopy(renderer, this->texture, nullptr, &rect2);*/
+
+		SDL_Rect rect = { 0, 0, 512, 256 };
+		SDL_RenderCopy(renderer, this->texture, nullptr, &rect);
 	}
 
 	if (this->surface != nullptr)
